@@ -410,8 +410,12 @@ class nnUNetTrainerV2(nnUNetTrainer):
         overwrite patient-based early stopping. Always run to 1000 epochs
         :return:
         """
-        super().on_epoch_end()
+        continue_training_super = super().on_epoch_end()
+        if not continue_training_super:
+            self.print_to_log_file(f"continue_training_super is false after epoch {self.epoch}")
+
         continue_training = self.epoch < self.max_num_epochs
+        continue_training = continue_training and continue_training_super
 
         # it can rarely happen that the momentum of nnUNetTrainerV2 is too high for some dataset. If at epoch 100 the
         # estimated validation Dice is still 0 then we reduce the momentum from 0.99 to 0.95
