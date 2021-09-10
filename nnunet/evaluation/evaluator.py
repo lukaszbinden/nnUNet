@@ -278,6 +278,7 @@ class NiftiEvaluator(Evaluator):
         """Set the test segmentation."""
 
         if test is not None:
+            print(f"\nload test nifti from file: {test}")
             self.test_nifti = sitk.ReadImage(test)
             super(NiftiEvaluator, self).set_test(sitk.GetArrayFromImage(self.test_nifti))
         else:
@@ -288,6 +289,7 @@ class NiftiEvaluator(Evaluator):
         """Set the reference segmentation."""
 
         if reference is not None:
+            print(f"load reference nifti from file: {reference}")
             self.reference_nifti = sitk.ReadImage(reference)
             super(NiftiEvaluator, self).set_reference(sitk.GetArrayFromImage(self.reference_nifti))
         else:
@@ -310,7 +312,13 @@ def run_evaluation(args):
     evaluator.set_reference(ref)
     if evaluator.labels is None:
         evaluator.construct_labels()
-    current_scores = evaluator.evaluate(**metric_kwargs)
+
+    try:
+        current_scores = evaluator.evaluate(**metric_kwargs)
+    except AssertionError as ae:
+        print(f"caught AE:\ntest={test}\nrefe={ref}")
+        raise ae
+
     if type(test) == str:
         current_scores["test"] = test
     if type(ref) == str:

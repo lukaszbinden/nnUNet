@@ -76,6 +76,7 @@ def consolidate_folds(output_folder_base, validation_folder_name: str = 'validat
 
     # determine_postprocessing needs a summary.json file in the folder where the raw predictions are. We could compute
     # that from the summary files of the five folds but I am feeling lazy today
+    print(f"\n\ntest_pred_pairs:\n{test_pred_pairs}")
     aggregate_scores(test_pred_pairs, labels=classes, json_output_file=join(output_folder_raw, "summary.json"),
                      num_threads=default_num_threads)
 
